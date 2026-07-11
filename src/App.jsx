@@ -1,26 +1,26 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import './App.css';
 import ProductList from './components/ProductList';
 import CartItem from './components/CartItem';
-import './App.css';
 
-function LandingPage() {
+const LandingPage = () => {
   const navigate = useNavigate();
-
-  const handleGetStarted = () => {
+  const handleGetStartedClick = () => {
     navigate('/products');
   };
-
   return (
     <div className="landing-page">
-      <h1>Welcome to Paradise Nursery</h1>
-      <p>Your one-stop destination for beautiful houseplants</p>
-      <button onClick={handleGetStarted} className="get-started-btn">
-        Get Started
-      </button>
+      <div className="landing-content">
+        <h1>Paradise Nursery</h1>
+        <p>Your one-stop shop for beautiful houseplants</p>
+        <button className="get-started-btn" onClick={handleGetStartedClick}>
+          Get Started
+        </button>
+      </div>
     </div>
   );
-}
+};
 
 function App() {
   return (
