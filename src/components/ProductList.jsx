@@ -1,93 +1,111 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addItem } from '../store/cartSlice';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { addItem } from '../features/cartSlice';
 
-function Navbar() {
-  const items = useSelector(state => state.cart.items);
-  const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
+// ---------- Navbar component (shared with CartItem) ----------
+export const Navbar = () => {
+  const location = useLocation();
+  const totalItems = useSelector((state) =>
+    state.cart.items.reduce((sum, item) => sum + item.quantity, 0)
+  );
+
   return (
-    <nav style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', background: '#f5f5f5' }}>
-      <div>
-        <Link to="/" style={{ marginRight: '1rem' }}>Home</Link>
-        <Link to="/" style={{ marginRight: '1rem' }}>Plants</Link>
-        <Link to="/cart">Cart</Link>
+    <nav className="navbar">
+      <div className="nav-links">
+        <Link to="/" className={location.pathname === '/' ? 'active' : ''}>
+          Home
+        </Link>
+        <Link to="/" className={location.pathname === '/' ? 'active' : ''}>
+          Plants
+        </Link>
+        <Link to="/cart" className={location.pathname === '/cart' ? 'active' : ''}>
+          Cart
+        </Link>
       </div>
-      <div>
-        <span>🛒</span>
-        <span style={{ marginLeft: '0.5rem', fontWeight: 'bold' }}>{totalQuantity}</span>
+      <div className="cart-icon">
+        <span role="img" aria-label="cart">🛒</span>
+        <span className="cart-count">{totalItems}</span>
       </div>
     </nav>
   );
-}
+};
 
-const plantCategories = [
-  {
-    name: 'Air Purifying',
-    plants: [
-      { id: 1, name: 'Snake Plant', price: 19.99, thumbnail: 'https://placehold.co/150?text=Snake+Plant' },
-      { id: 2, name: 'Peace Lily', price: 24.99, thumbnail: 'https://placehold.co/150?text=Peace+Lily' },
-      { id: 3, name: 'Spider Plant', price: 14.99, thumbnail: 'https://placehold.co/150?text=Spider+Plant' },
-      { id: 4, name: 'Aloe Vera', price: 12.99, thumbnail: 'https://placehold.co/150?text=Aloe+Vera' },
-      { id: 5, name: 'Boston Fern', price: 22.99, thumbnail: 'https://placehold.co/150?text=Boston+Fern' },
-      { id: 6, name: 'Bamboo Palm', price: 29.99, thumbnail: 'https://placehold.co/150?text=Bamboo+Palm' }
-    ]
-  },
+// ---------- Product data ----------
+const productCategories = [
   {
     name: 'Succulents',
     plants: [
-      { id: 7, name: 'Echeveria', price: 9.99, thumbnail: 'https://placehold.co/150?text=Echeveria' },
-      { id: 8, name: 'Jade Plant', price: 15.99, thumbnail: 'https://placehold.co/150?text=Jade+Plant' },
-      { id: 9, name: 'Haworthia', price: 8.99, thumbnail: 'https://placehold.co/150?text=Haworthia' },
-      { id: 10, name: 'Sedum', price: 11.99, thumbnail: 'https://placehold.co/150?text=Sedum' },
-      { id: 11, name: 'Agave', price: 18.99, thumbnail: 'https://placehold.co/150?text=Agave' },
-      { id: 12, name: 'Lithops', price: 13.99, thumbnail: 'https://placehold.co/150?text=Lithops' }
-    ]
+      { id: 's1', name: 'Aloe Vera', price: 12.99, thumbnail: 'https://example.com/aloe.jpg' },
+      { id: 's2', name: 'Echeveria', price: 9.99, thumbnail: 'https://example.com/echeveria.jpg' },
+      { id: 's3', name: 'Haworthia', price: 11.49, thumbnail: 'https://example.com/haworthia.jpg' },
+      { id: 's4', name: 'Jade Plant', price: 13.99, thumbnail: 'https://example.com/jade.jpg' },
+      { id: 's5', name: 'Sedum', price: 8.99, thumbnail: 'https://example.com/sedum.jpg' },
+      { id: 's6', name: 'Cactus', price: 10.99, thumbnail: 'https://example.com/cactus.jpg' },
+    ],
   },
   {
-    name: 'Flowering',
+    name: 'Foliage Plants',
     plants: [
-      { id: 13, name: 'Orchid', price: 34.99, thumbnail: 'https://placehold.co/150?text=Orchid' },
-      { id: 14, name: 'African Violet', price: 12.99, thumbnail: 'https://placehold.co/150?text=African+Violet' },
-      { id: 15, name: 'Anthurium', price: 27.99, thumbnail: 'https://placehold.co/150?text=Anthurium' },
-      { id: 16, name: 'Christmas Cactus', price: 19.99, thumbnail: 'https://placehold.co/150?text=Christmas+Cactus' },
-      { id: 17, name: 'Kalanchoe', price: 10.99, thumbnail: 'https://placehold.co/150?text=Kalanchoe' },
-      { id: 18, name: 'Gloxinia', price: 16.99, thumbnail: 'https://placehold.co/150?text=Gloxinia' }
-    ]
-  }
+      { id: 'f1', name: 'Monstera', price: 24.99, thumbnail: 'https://example.com/monstera.jpg' },
+      { id: 'f2', name: 'Fiddle Leaf Fig', price: 29.99, thumbnail: 'https://example.com/fiddle.jpg' },
+      { id: 'f3', name: 'Snake Plant', price: 19.99, thumbnail: 'https://example.com/snake.jpg' },
+      { id: 'f4', name: 'ZZ Plant', price: 17.99, thumbnail: 'https://example.com/zz.jpg' },
+      { id: 'f5', name: 'Pothos', price: 13.99, thumbnail: 'https://example.com/pothos.jpg' },
+      { id: 'f6', name: 'Philodendron', price: 15.99, thumbnail: 'https://example.com/philodendron.jpg' },
+    ],
+  },
+  {
+    name: 'Flowering Plants',
+    plants: [
+      { id: 'fl1', name: 'Orchid', price: 34.99, thumbnail: 'https://example.com/orchid.jpg' },
+      { id: 'fl2', name: 'Peace Lily', price: 22.99, thumbnail: 'https://example.com/peace-lily.jpg' },
+      { id: 'fl3', name: 'Anthurium', price: 26.99, thumbnail: 'https://example.com/anthurium.jpg' },
+      { id: 'fl4', name: 'African Violet', price: 14.99, thumbnail: 'https://example.com/african-violet.jpg' },
+      { id: 'fl5', name: 'Begonia', price: 18.99, thumbnail: 'https://example.com/begonia.jpg' },
+      { id: 'fl6', name: 'Kalanchoe', price: 16.99, thumbnail: 'https://example.com/kalanchoe.jpg' },
+    ],
+  },
 ];
 
-export default function ProductList() {
+// ---------- ProductList component ----------
+const ProductList = () => {
   const dispatch = useDispatch();
-  const cartItems = useSelector(state => state.cart.items);
+  const [addedIds, setAddedIds] = useState([]);
 
-  const isInCart = (plantId) => cartItems.some(item => item.id === plantId);
+  const handleAddToCart = (plant) => {
+    dispatch(addItem(plant));
+    setAddedIds((prev) => [...prev, plant.id]);
+  };
 
   return (
-    <div>
+    <div className="product-list-page">
       <Navbar />
-      <h2>Houseplants</h2>
-      {plantCategories.map((category, idx) => (
-        <div key={idx} style={{ marginBottom: '2rem' }}>
-          <h3>{category.name}</h3>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-            {category.plants.map(plant => (
-              <div key={plant.id} className="plant-card" style={{ border: '1px solid #ddd', padding: '1rem', width: '150px', textAlign: 'center' }}>
-                <img src={plant.thumbnail} alt={plant.name} style={{ width: '100%', height: '100px', objectFit: 'cover' }} />
-                <p style={{ fontWeight: 'bold' }}>{plant.name}</p>
-                <p>${plant.price.toFixed(2)}</p>
-                <button
-                  onClick={() => dispatch(addItem({ id: plant.id, name: plant.name, price: plant.price, thumbnail: plant.thumbnail, quantity: 1 }))}
-                  disabled={isInCart(plant.id)}
-                  style={{ padding: '0.5rem', backgroundColor: isInCart(plant.id) ? '#ccc' : '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: isInCart(plant.id) ? 'not-allowed' : 'pointer' }}
-                >
-                  {isInCart(plant.id) ? 'Added' : 'Add to Cart'}
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
+      <div className="categories">
+        {productCategories.map((category) => (
+          <section key={category.name} className="category-section">
+            <h2>{category.name}</h2>
+            <div className="plants-grid">
+              {category.plants.map((plant) => (
+                <div key={plant.id} className="plant-card">
+                  <img src={plant.thumbnail} alt={plant.name} className="plant-thumbnail" />
+                  <h3>{plant.name}</h3>
+                  <p className="price">${plant.price.toFixed(2)}</p>
+                  <button
+                    className="add-to-cart-btn"
+                    onClick={() => handleAddToCart(plant)}
+                    disabled={addedIds.includes(plant.id)}
+                  >
+                    {addedIds.includes(plant.id) ? 'Added' : 'Add to Cart'}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
     </div>
   );
-}
+};
+
+export default ProductList;
