@@ -1,32 +1,64 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import ProductList from './components/ProductList';
 import CartItem from './components/CartItem';
 import './App.css';
 
-function LandingPage() {
+function LandingPage({ onGetStarted }) {
   return (
     <div className="landing-page">
-      <h1>Paradise Nursery</h1>
-      <p>Your one-stop shop for beautiful houseplants</p>
-      <Link to="/products">
-        <button className="get-started-btn">Get Started</button>
-      </Link>
+      <div className="landing-content">
+        <h1>Paradise Nursery</h1>
+        <p>Your go‑to destination for houseplants</p>
+        <button className="get-started-btn" onClick={onGetStarted}>
+          Get Started
+        </button>
+      </div>
     </div>
   );
 }
 
 function App() {
+  const [showProducts, setShowProducts] = useState(false);
+  const [showCart, setShowCart] = useState(false);
+
+  const handleGetStartedClick = () => {
+    setShowProducts(true);
+    setShowCart(false);
+  };
+
+  const goToCart = () => {
+    setShowProducts(false);
+    setShowCart(true);
+  };
+
+  const goToProducts = () => {
+    setShowProducts(true);
+    setShowCart(false);
+  };
+
+  const goHome = () => {
+    setShowProducts(false);
+    setShowCart(false);
+  };
+
   return (
-    <Router>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/products" element={<ProductList />} />
-          <Route path="/cart" element={<CartItem />} />
-        </Routes>
-      </div>
-    </Router>
+    <div className="App">
+      {!showProducts && !showCart && (
+        <LandingPage onGetStarted={handleGetStartedClick} />
+      )}
+      {showProducts && (
+        <ProductList
+          onNavigateToCart={goToCart}
+          onNavigateToHome={goHome}
+        />
+      )}
+      {showCart && (
+        <CartItem
+          onContinueShopping={goToProducts}
+          onNavigateToHome={goHome}
+        />
+      )}
+    </div>
   );
 }
 
