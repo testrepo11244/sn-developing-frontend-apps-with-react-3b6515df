@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ProductList from './components/ProductList';
-import CartItem from './components/CartItem';
 import './App.css';
 
 function LandingPage({ onGetStarted }) {
   return (
-    <div className="landing-page">
+    <div className="landing">
       <h1>Paradise Nursery</h1>
-      <p>Your destination for beautiful hand‑picked houseplants</p>
+      <p>Bringing nature indoors</p>
       <button className="get-started-btn" onClick={onGetStarted}>
         Get Started
       </button>
@@ -19,17 +17,16 @@ function LandingPage({ onGetStarted }) {
 function App() {
   const [showProducts, setShowProducts] = useState(false);
 
+  const handleGetStartedClick = () => {
+    setShowProducts(true);
+  };
+
   return (
-    <div>
+    <div className="App">
       {!showProducts ? (
-        <LandingPage onGetStarted={() => setShowProducts(true)} />
+        <LandingPage onGetStarted={handleGetStartedClick} />
       ) : (
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<ProductList />} />
-            <Route path="/cart" element={<CartItem />} />
-          </Routes>
-        </BrowserRouter>
+        <ProductList />
       )}
     </div>
   );
