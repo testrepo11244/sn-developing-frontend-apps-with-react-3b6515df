@@ -1,65 +1,33 @@
-import React, { useState } from 'react';
-import ProductList from './components/ProductList';
-import CartItem from './components/CartItem';
-import './App.css';
-
-function LandingPage({ onGetStarted }) {
-  return (
-    <div className="landing-page">
-      <div className="landing-content">
-        <h1>Paradise Nursery</h1>
-        <p>Your go‑to destination for houseplants</p>
-        <button className="get-started-btn" onClick={onGetStarted}>
-          Get Started
-        </button>
-      </div>
-    </div>
-  );
-}
+import { useState } from 'react'
+import './App.css'
+import LandingPage from './components/LandingPage'
+import ProductList from './components/ProductList'
+import CartItem from './components/CartItem'
+import Navbar from './components/Navbar'
 
 function App() {
-  const [showProducts, setShowProducts] = useState(false);
-  const [showCart, setShowCart] = useState(false);
+  const [currentPage, setCurrentPage] = useState('landing')
 
-  const handleGetStartedClick = () => {
-    setShowProducts(true);
-    setShowCart(false);
-  };
-
-  const goToCart = () => {
-    setShowProducts(false);
-    setShowCart(true);
-  };
-
-  const goToProducts = () => {
-    setShowProducts(true);
-    setShowCart(false);
-  };
-
-  const goHome = () => {
-    setShowProducts(false);
-    setShowCart(false);
-  };
+  const handleNavigate = (page) => {
+    setCurrentPage(page)
+  }
 
   return (
     <div className="App">
-      {!showProducts && !showCart && (
-        <LandingPage onGetStarted={handleGetStartedClick} />
+      {currentPage !== 'landing' && (
+        <Navbar currentPage={currentPage} onNavigate={handleNavigate} />
       )}
-      {showProducts && (
-        <ProductList
-          onNavigateToCart={goToCart}
-          onNavigateToHome={goHome}
-        />
+      {currentPage === 'landing' && (
+        <LandingPage onGetStarted={() => handleNavigate('products')} />
       )}
-      {showCart && (
-        <CartItem
-          onContinueShopping={goToProducts}
-          onNavigateToHome={goHome}
-        />
+      {currentPage === 'products' && (
+        <ProductList onNavigate={handleNavigate} />
+      )}
+      {currentPage === 'cart' && (
+        <CartItem onNavigate={handleNavigate} />
       )}
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
