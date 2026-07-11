@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import ProductList from './components/ProductList';
+import CartItem from './components/CartItem';
 import './App.css';
 
-function LandingPage({ onGetStarted }) {
+function LandingPage() {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    navigate('/products');
+  };
+
   return (
-    <div className="landing">
-      <h1>Paradise Nursery</h1>
-      <p>Bringing nature indoors</p>
-      <button className="get-started-btn" onClick={onGetStarted}>
+    <div className="landing-page">
+      <h1>Welcome to Paradise Nursery</h1>
+      <p>Your one-stop destination for beautiful houseplants</p>
+      <button onClick={handleGetStarted} className="get-started-btn">
         Get Started
       </button>
     </div>
@@ -15,20 +23,16 @@ function LandingPage({ onGetStarted }) {
 }
 
 function App() {
-  const [showProducts, setShowProducts] = useState(false);
-
-  const handleGetStartedClick = () => {
-    setShowProducts(true);
-  };
-
   return (
-    <div className="App">
-      {!showProducts ? (
-        <LandingPage onGetStarted={handleGetStartedClick} />
-      ) : (
-        <ProductList />
-      )}
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/products" element={<ProductList />} />
+          <Route path="/cart" element={<CartItem />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
