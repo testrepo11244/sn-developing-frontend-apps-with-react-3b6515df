@@ -1,69 +1,91 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { addItem } from '../features/cartSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { addToCart } from '../redux/CartSlice';
+import { BsCart3 } from 'react-icons/bs';
 
-const products = [
-  // Air Purifying (6 plants)
-  { id: 1, name: 'Snake Plant', price: 25, thumbnail: '/images/snake-plant.jpg', category: 'Air Purifying' },
-  { id: 2, name: 'Spider Plant', price: 20, thumbnail: '/images/spider-plant.jpg', category: 'Air Purifying' },
-  { id: 3, name: 'Peace Lily', price: 30, thumbnail: '/images/peace-lily.jpg', category: 'Air Purifying' },
-  { id: 4, name: 'Aloe Vera', price: 18, thumbnail: '/images/aloe-vera.jpg', category: 'Air Purifying' },
-  { id: 5, name: 'Bamboo Palm', price: 35, thumbnail: '/images/bamboo-palm.jpg', category: 'Air Purifying' },
-  { id: 6, name: 'Boston Fern', price: 28, thumbnail: '/images/boston-fern.jpg', category: 'Air Purifying' },
-  // Low Light (6 plants)
-  { id: 7, name: 'ZZ Plant', price: 32, thumbnail: '/images/zz-plant.jpg', category: 'Low Light' },
-  { id: 8, name: 'Cast Iron Plant', price: 40, thumbnail: '/images/cast-iron-plant.jpg', category: 'Low Light' },
-  { id: 9, name: 'Parlor Palm', price: 22, thumbnail: '/images/parlor-palm.jpg', category: 'Low Light' },
-  { id: 10, name: 'Pothos', price: 15, thumbnail: '/images/pothos.jpg', category: 'Low Light' },
-  { id: 11, name: 'Dracaena', price: 27, thumbnail: '/images/dracaena.jpg', category: 'Low Light' },
-  { id: 12, name: 'Philodendron', price: 19, thumbnail: '/images/philodendron.jpg', category: 'Low Light' },
-  // Flowering (6 plants)
-  { id: 13, name: 'Orchid', price: 45, thumbnail: '/images/orchid.jpg', category: 'Flowering' },
-  { id: 14, name: 'African Violet', price: 14, thumbnail: '/images/african-violet.jpg', category: 'Flowering' },
-  { id: 15, name: 'Anthurium', price: 38, thumbnail: '/images/anthurium.jpg', category: 'Flowering' },
-  { id: 16, name: 'Bromeliad', price: 42, thumbnail: '/images/bromeliad.jpg', category: 'Flowering' },
-  { id: 17, name: 'Kalanchoe', price: 16, thumbnail: '/images/kalanchoe.jpg', category: 'Flowering' },
-  { id: 18, name: 'Gloxinia', price: 36, thumbnail: '/images/gloxinia.jpg', category: 'Flowering' },
+const categories = [
+  {
+    name: 'Indoor Plants',
+    plants: [
+      { id: 1, name: 'Snake Plant', price: 29.99, thumbnail: 'https://via.placeholder.com/150?text=Snake+Plant' },
+      { id: 2, name: 'Spider Plant', price: 19.99, thumbnail: 'https://via.placeholder.com/150?text=Spider+Plant' },
+      { id: 3, name: 'Peace Lily', price: 34.99, thumbnail: 'https://via.placeholder.com/150?text=Peace+Lily' },
+      { id: 4, name: 'ZZ Plant', price: 39.99, thumbnail: 'https://via.placeholder.com/150?text=ZZ+Plant' },
+      { id: 5, name: 'Pothos', price: 14.99, thumbnail: 'https://via.placeholder.com/150?text=Pothos' },
+      { id: 6, name: 'Philodendron', price: 24.99, thumbnail: 'https://via.placeholder.com/150?text=Philodendron' },
+    ],
+  },
+  {
+    name: 'Succulents',
+    plants: [
+      { id: 7, name: 'Aloe Vera', price: 12.99, thumbnail: 'https://via.placeholder.com/150?text=Aloe+Vera' },
+      { id: 8, name: 'Echeveria', price: 16.99, thumbnail: 'https://via.placeholder.com/150?text=Echeveria' },
+      { id: 9, name: 'Jade Plant', price: 22.99, thumbnail: 'https://via.placeholder.com/150?text=Jade+Plant' },
+      { id: 10, name: 'Haworthia', price: 13.99, thumbnail: 'https://via.placeholder.com/150?text=Haworthia' },
+      { id: 11, name: 'Sedum', price: 15.99, thumbnail: 'https://via.placeholder.com/150?text=Sedum' },
+      { id: 12, name: 'Agave', price: 28.99, thumbnail: 'https://via.placeholder.com/150?text=Agave' },
+    ],
+  },
+  {
+    name: 'Flowering Plants',
+    plants: [
+      { id: 13, name: 'Orchid', price: 44.99, thumbnail: 'https://via.placeholder.com/150?text=Orchid' },
+      { id: 14, name: 'Anthurium', price: 32.99, thumbnail: 'https://via.placeholder.com/150?text=Anthurium' },
+      { id: 15, name: 'Bromeliad', price: 37.99, thumbnail: 'https://via.placeholder.com/150?text=Bromeliad' },
+      { id: 16, name: 'African Violet', price: 18.99, thumbnail: 'https://via.placeholder.com/150?text=African+Violet' },
+      { id: 17, name: 'Kalanchoe', price: 21.99, thumbnail: 'https://via.placeholder.com/150?text=Kalanchoe' },
+      { id: 18, name: 'Cyclamen', price: 27.99, thumbnail: 'https://via.placeholder.com/150?text=Cyclamen' },
+    ],
+  },
 ];
 
-const categories = ['Air Purifying', 'Low Light', 'Flowering'];
-
-const ProductList = () => {
+function ProductList() {
   const dispatch = useDispatch();
-  const cartItems = useSelector(state => state.cart.items);
+  const cartItems = useSelector((state) => state.cart.items);
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-  const isInCart = (productId) => cartItems.some(item => item.id === productId);
-
-  const handleAddToCart = (product) => {
-    dispatch(addItem(product));
+  const handleAddToCart = (plant) => {
+    dispatch(addToCart({ id: plant.id, name: plant.name, price: plant.price, thumbnail: plant.thumbnail }));
   };
 
   return (
-    <div className="product-list">
-      {categories.map(category => (
-        <section key={category}>
-          <h2>{category}</h2>
-          <div className="product-grid">
-            {products
-              .filter(p => p.category === category)
-              .map(product => (
-                <div key={product.id} className="product-card">
-                  <img src={product.thumbnail} alt={product.name} />
-                  <h3>{product.name}</h3>
-                  <p>${product.price}</p>
+    <div className="product-list-page">
+      <nav className="navbar">
+        <Link to="/" className="nav-link">Home</Link>
+        <Link to="/products" className="nav-link">Plants</Link>
+        <Link to="/cart" className="nav-link cart-icon-link">
+          <BsCart3 size={24} />
+          {totalItems > 0 && <span className="cart-count">{totalItems}</span>}
+        </Link>
+      </nav>
+      <h1>Our Plants</h1>
+      {categories.map((category) => (
+        <div key={category.name} className="category-section">
+          <h2>{category.name}</h2>
+          <div className="plant-grid">
+            {category.plants.map((plant) => {
+              const isInCart = cartItems.some((item) => item.id === plant.id);
+              return (
+                <div key={plant.id} className="plant-card">
+                  <img src={plant.thumbnail} alt={plant.name} />
+                  <h3>{plant.name}</h3>
+                  <p>${plant.price.toFixed(2)}</p>
                   <button
-                    onClick={() => handleAddToCart(product)}
-                    disabled={isInCart(product.id)}
+                    onClick={() => handleAddToCart(plant)}
+                    disabled={isInCart}
+                    className="add-to-cart-btn"
                   >
-                    {isInCart(product.id) ? 'Added' : 'Add to Cart'}
+                    {isInCart ? 'In Cart' : 'Add to Cart'}
                   </button>
                 </div>
-              ))}
+              );
+            })}
           </div>
-        </section>
+        </div>
       ))}
     </div>
   );
-};
+}
 
 export default ProductList;
