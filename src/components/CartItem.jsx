@@ -1,68 +1,66 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { increaseQuantity, decreaseQuantity, removeItem } from '../features/cartSlice';
+import { removeItem, incrementQuantity, decrementQuantity } from '../redux/CartSlice';
+import { BsCart3 } from 'react-icons/bs';
 
-const CartItem = () => {
+function CartItem() {
   const dispatch = useDispatch();
-  const cartItems = useSelector(state => state.cart.items);
-  const [showCheckoutMessage, setShowCheckoutMessage] = useState(false);
-
-  const totalAmount = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  const cartItems = useSelector((state) => state.cart.items);
+  const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleCheckout = () => {
-    setShowCheckoutMessage(true);
-    setTimeout(() => setShowCheckoutMessage(false), 3000);
+    alert('Coming Soon!');
   };
 
   return (
     <div className="cart-page">
-      <h2>Shopping Cart</h2>
+      <nav className="navbar">
+        <Link to="/" className="nav-link">Home</Link>
+        <Link to="/products" className="nav-link">Plants</Link>
+        <Link to="/cart" className="nav-link cart-icon-link">
+          <BsCart3 size={24} />
+          {totalItems > 0 && <span className="cart-count">{totalItems}</span>}
+        </Link>
+      </nav>
+      <h1>Shopping Cart</h1>
       {cartItems.length === 0 ? (
-        <p>Your cart is empty.</p>
+        <div className="empty-cart">
+          <p>Your cart is empty.</p>
+          <Link to="/products" className="continue-shopping-btn">Continue Shopping</Link>
+        </div>
       ) : (
         <>
           <div className="cart-items">
-            {cartItems.map(item => (
+            {cartItems.map((item) => (
               <div key={item.id} className="cart-item">
-                <img src={item.thumbnail} alt={item.name} />
-                <div className="item-details">
-                  <h3>{item.name}</h3>
-                  <p>Unit Price: ${item.price}</p>
-                  <div className="quantity-controls">
-                    <button onClick={() => dispatch(decreaseQuantity(item.id))}>
-                      -
-                    </button>
-                    <span>{item.quantity}</span>
-                    <button onClick={() => dispatch(increaseQuantity(item.id))}>
-                      +
-                    </button>
-                  </div>
-                  <p>Total: ${item.price * item.quantity}</p>
-                  <button onClick={() => dispatch(removeItem(item.id))}>
-                    Delete
-                  </button>
+                <img src={item.thumbnail} alt={item.name} className="cart-item-thumbnail" />
+                <div className="cart-item-details">
+                  <h4>{item.name}</h4>
+                  <p>Unit Price: ${item.price.toFixed(2)}</p>
+                  <p>Total: ${(item.price * item.quantity).toFixed(2)}</p>
+                </div>
+                <div className="cart-item-actions">
+                  <button onClick={() => dispatch(decrementQuantity(item.id))} disabled={item.quantity <= 1}>-</button>
+                  <span className="quantity">{item.quantity}</span>
+                  <button onClick={() => dispatch(incrementQuantity(item.id))}>+</button>
+                  <button className="delete-btn" onClick={() => dispatch(removeItem(item.id))}>Delete</button>
                 </div>
               </div>
             ))}
           </div>
           <div className="cart-summary">
-            <p>Total Amount: ${totalAmount}</p>
-            <button onClick={handleCheckout}>Checkout</button>
-            <Link to="/products" className="continue-shopping-btn">
-              Continue Shopping
-            </Link>
+            <h2>Total Amount: ${totalAmount.toFixed(2)}</h2>
+            <div className="cart-footer-actions">
+              <Link to="/products" className="continue-shopping-btn">Continue Shopping</Link>
+              <button onClick={handleCheckout} className="checkout-btn">Checkout</button>
+            </div>
           </div>
         </>
       )}
-      {showCheckoutMessage && (
-        <div className="checkout-message">Coming Soon</div>
-      )}
     </div>
   );
-};
+}
 
 export default CartItem;
