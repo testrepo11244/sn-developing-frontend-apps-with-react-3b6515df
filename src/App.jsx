@@ -8,8 +8,10 @@ function LandingPage({ onGetStarted }) {
   return (
     <div className="landing-page">
       <h1>Paradise Nursery</h1>
-      <p>Your destination for lush houseplants</p>
-      <button onClick={onGetStarted}>Get Started</button>
+      <p>Your destination for beautiful hand‑picked houseplants</p>
+      <button className="get-started-btn" onClick={onGetStarted}>
+        Get Started
+      </button>
     </div>
   );
 }
@@ -18,16 +20,18 @@ function App() {
   const [showProducts, setShowProducts] = useState(false);
 
   return (
-    <BrowserRouter>
+    <div>
       {!showProducts ? (
         <LandingPage onGetStarted={() => setShowProducts(true)} />
       ) : (
-        <Routes>
-          <Route path="/" element={<ProductList />} />
-          <Route path="/cart" element={<CartItem />} />
-        </Routes>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<ProductList />} />
+            <Route path="/cart" element={<CartItem />} />
+          </Routes>
+        </BrowserRouter>
       )}
-    </BrowserRouter>
+    </div>
   );
 }
 
