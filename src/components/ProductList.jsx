@@ -1,115 +1,80 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { addToCart } from '../redux/CartSlice';
-import './ProductList.css';
+import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { addItem } from '../redux/CartSlice'
 
-const plantsData = [
-  {
-    category: 'Air Purifying Plants',
-    items: [
-      { id: 1, name: 'Snake Plant', price: 15, thumbnail: 'https://picsum.photos/seed/snakeplant/200/200' },
-      { id: 2, name: 'Spider Plant', price: 10, thumbnail: 'https://picsum.photos/seed/spiderplant/200/200' },
-      { id: 3, name: 'Peace Lily', price: 20, thumbnail: 'https://picsum.photos/seed/peacelily/200/200' },
-      { id: 4, name: 'Aloe Vera', price: 12, thumbnail: 'https://picsum.photos/seed/aloevera/200/200' },
-      { id: 5, name: 'Bamboo Palm', price: 25, thumbnail: 'https://picsum.photos/seed/bamboopalm/200/200' },
-      { id: 6, name: 'Dracaena', price: 18, thumbnail: 'https://picsum.photos/seed/dracaena/200/200' },
-    ],
-  },
-  {
-    category: 'Aromatic Fragrant Plants',
-    items: [
-      { id: 7, name: 'Lavender', price: 8, thumbnail: 'https://picsum.photos/seed/lavender/200/200' },
-      { id: 8, name: 'Rosemary', price: 9, thumbnail: 'https://picsum.photos/seed/rosemary/200/200' },
-      { id: 9, name: 'Jasmine', price: 14, thumbnail: 'https://picsum.photos/seed/jasmine/200/200' },
-      { id: 10, name: 'Mint', price: 6, thumbnail: 'https://picsum.photos/seed/mint/200/200' },
-      { id: 11, name: 'Eucalyptus', price: 12, thumbnail: 'https://picsum.photos/seed/eucalyptus/200/200' },
-      { id: 12, name: 'Lemon Balm', price: 7, thumbnail: 'https://picsum.photos/seed/lemonbalm/200/200' },
-    ],
-  },
-  {
-    category: 'Succulents',
-    items: [
-      { id: 13, name: 'Echeveria', price: 9, thumbnail: 'https://picsum.photos/seed/echeveria/200/200' },
-      { id: 14, name: 'Haworthia', price: 11, thumbnail: 'https://picsum.photos/seed/haworthia/200/200' },
-      { id: 15, name: 'Jade Plant', price: 13, thumbnail: 'https://picsum.photos/seed/jadeplant/200/200' },
-      { id: 16, name: 'Aloe', price: 12, thumbnail: 'https://picsum.photos/seed/aloe/200/200' },
-      { id: 17, name: 'Sedum', price: 8, thumbnail: 'https://picsum.photos/seed/sedum/200/200' },
-      { id: 18, name: 'Crassula', price: 10, thumbnail: 'https://picsum.photos/seed/crassula/200/200' },
-    ],
-  },
-];
-
-function ProductList({ onNavigateToCart, onNavigateToHome }) {
-  const dispatch = useDispatch();
-  const cartItems = useSelector((state) => state.cart.items);
-
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-
-  const isInCart = (plantId) => cartItems.some((item) => item.id === plantId);
-
-  const handleAddToCart = (plant) => {
-    if (!isInCart(plant.id)) {
-      dispatch(addToCart(plant));
-    }
-  };
-
-  return (
-    <div className="product-list-page">
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="navbar-brand">Paradise Nursery</div>
-        <ul className="navbar-links">
-          <li>
-            <button className="nav-link" onClick={onNavigateToHome}>
-              Home
-            </button>
-          </li>
-          <li>
-            <button className="nav-link" onClick={() => {}}>
-              Plants
-            </button>
-          </li>
-          <li>
-            <button className="nav-link cart-link" onClick={onNavigateToCart}>
-              Cart
-              {totalItems > 0 && (
-                <span className="cart-badge">{totalItems}</span>
-              )}
-            </button>
-          </li>
-        </ul>
-      </nav>
-
-      {/* Product listing */}
-      <div className="product-container">
-        {plantsData.map((category) => (
-          <div key={category.category} className="category-section">
-            <h2 className="category-title">{category.category}</h2>
-            <div className="plant-grid">
-              {category.items.map((plant) => (
-                <div key={plant.id} className="plant-card">
-                  <img
-                    src={plant.thumbnail}
-                    alt={plant.name}
-                    className="plant-thumbnail"
-                  />
-                  <h3 className="plant-name">{plant.name}</h3>
-                  <p className="plant-price">${plant.price.toFixed(2)}</p>
-                  <button
-                    className="add-to-cart-btn"
-                    disabled={isInCart(plant.id)}
-                    onClick={() => handleAddToCart(plant)}
-                  >
-                    {isInCart(plant.id) ? 'Added' : 'Add to Cart'}
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+const plantData = {
+  'Air Purifying': [
+    { id: 'ap1', name: 'Snake Plant', price: 15.99, thumbnail: 'https://via.placeholder.com/80?text=Snake+Plant' },
+    { id: 'ap2', name: 'Peace Lily', price: 12.99, thumbnail: 'https://via.placeholder.com/80?text=Peace+Lily' },
+    { id: 'ap3', name: 'Spider Plant', price: 9.99, thumbnail: 'https://via.placeholder.com/80?text=Spider+Plant' },
+    { id: 'ap4', name: 'Aloe Vera', price: 11.99, thumbnail: 'https://via.placeholder.com/80?text=Aloe+Vera' },
+    { id: 'ap5', name: 'Boston Fern', price: 14.99, thumbnail: 'https://via.placeholder.com/80?text=Boston+Fern' },
+    { id: 'ap6', name: 'Rubber Plant', price: 18.99, thumbnail: 'https://via.placeholder.com/80?text=Rubber+Plant' },
+  ],
+  'Aromatic Fragrant': [
+    { id: 'ar1', name: 'Lavender', price: 14.99, thumbnail: 'https://via.placeholder.com/80?text=Lavender' },
+    { id: 'ar2', name: 'Rosemary', price: 10.99, thumbnail: 'https://via.placeholder.com/80?text=Rosemary' },
+    { id: 'ar3', name: 'Mint', price: 8.99, thumbnail: 'https://via.placeholder.com/80?text=Mint' },
+    { id: 'ar4', name: 'Jasmine', price: 16.99, thumbnail: 'https://via.placeholder.com/80?text=Jasmine' },
+    { id: 'ar5', name: 'Eucalyptus', price: 19.99, thumbnail: 'https://via.placeholder.com/80?text=Eucalyptus' },
+    { id: 'ar6', name: 'Gardenia', price: 22.99, thumbnail: 'https://via.placeholder.com/80?text=Gardenia' },
+  ],
+  'Succulents': [
+    { id: 'su1', name: 'Echeveria', price: 7.99, thumbnail: 'https://via.placeholder.com/80?text=Echeveria' },
+    { id: 'su2', name: 'Jade Plant', price: 9.99, thumbnail: 'https://via.placeholder.com/80?text=Jade+Plant' },
+    { id: 'su3', name: 'Zebra Plant', price: 8.99, thumbnail: 'https://via.placeholder.com/80?text=Zebra+Plant' },
+    { id: 'su4', name: 'Burros Tail', price: 11.99, thumbnail: 'https://via.placeholder.com/80?text=Burros+Tail' },
+    { id: 'su5', name: 'Haworthia', price: 6.99, thumbnail: 'https://via.placeholder.com/80?text=Haworthia' },
+    { id: 'su6', name: 'Lithops', price: 13.99, thumbnail: 'https://via.placeholder.com/80?text=Lithops' },
+  ],
 }
 
-export default ProductList;
+function ProductList({ onNavigate }) {
+  const dispatch = useDispatch()
+  const cart = useSelector((state) => state.cart)
+  // Track disabled state per plant id after adding
+  const [addedItems, setAddedItems] = useState({})
+
+  const handleAddToCart = (plant) => {
+    dispatch(addItem(plant))
+    setAddedItems((prev) => ({ ...prev, [plant.id]: true }))
+  }
+
+  const isInCart = (plantId) => {
+    // Check if plant is already in cart (optional additional check)
+    return cart.items.some((item) => item.id === plantId)
+  }
+
+  const buttonDisabled = (plantId) => {
+    // Disable if already added in current session (local state)
+    return addedItems[plantId] || false
+  }
+
+  return (
+    <div className="product-list-container">
+      <h1>Our Plants</h1>
+      {Object.entries(plantData).map(([category, plants]) => (
+        <div key={category} className="category-section">
+          <h2>{category}</h2>
+          <div className="plant-grid">
+            {plants.map((plant) => (
+              <div key={plant.id} className="plant-card">
+                <img src={plant.thumbnail} alt={plant.name} />
+                <h3>{plant.name}</h3>
+                <p>${plant.price.toFixed(2)}</p>
+                <button
+                  onClick={() => handleAddToCart(plant)}
+                  disabled={buttonDisabled(plant.id)}
+                >
+                  {buttonDisabled(plant.id) ? 'Added' : 'Add to Cart'}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export default ProductList
