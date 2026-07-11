@@ -1,39 +1,48 @@
-import React, { useState } from 'react';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import ProductList from './components/ProductList';
 import CartItem from './components/CartItem';
+import './App.css';
 
-function LandingPage({ onGetStarted }) {
+const Navbar = () => {
+  const totalItems = useSelector(state =>
+    state.cart.items.reduce((sum, item) => sum + item.quantity, 0)
+  );
+
+  return (
+    <nav className="navbar">
+      <Link to="/" className="nav-link">Home</Link>
+      <Link to="/products" className="nav-link">Plants</Link>
+      <Link to="/cart" className="nav-link cart-link">
+        Cart {totalItems > 0 && <span className="cart-count">{totalItems}</span>}
+      </Link>
+    </nav>
+  );
+};
+
+const LandingPage = () => {
   return (
     <div className="landing">
       <h1>Paradise Nursery</h1>
-      <p>Your destination for lush houseplants</p>
-      <button onClick={onGetStarted}>Get Started</button>
+      <p>Your one‑stop shop for beautiful houseplants</p>
+      <Link to="/products" className="get-started-btn">Get Started</Link>
     </div>
   );
-}
+};
 
 function App() {
-  const [showProducts, setShowProducts] = useState(false);
-  const [showCart, setShowCart] = useState(false);
-
-  const handleGetStarted = () => setShowProducts(true);
-  const handleShowLanding = () => setShowProducts(false);
-  const handleShowCart = () => setShowCart(true);
-  const handleContinueShopping = () => setShowCart(false);
-
-  if (!showProducts) {
-    return <LandingPage onGetStarted={handleGetStarted} />;
-  }
-
   return (
-    <div className="app-main">
-      {showCart ? (
-        <CartItem onContinueShopping={handleContinueShopping} />
-      ) : (
-        <ProductList onShowCart={handleShowCart} onShowLanding={handleShowLanding} />
-      )}
-    </div>
+    <Router>
+      <div className="App">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/products" element={<ProductList />} />
+          <Route path="/cart" element={<CartItem />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
